@@ -1,26 +1,26 @@
-pipeline{
+pipeline {
     agent any
 
-    stages{
-        stage('Build Docker Image'){
-            steps{
-                script{
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
                     dockerapp = docker.build("agk-operation/guia-pratico-jenkins:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
                 }
             }
         }
-        stage('Push Docker Image'){
-            steps{
-                script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub'){
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         dockerapp.push('latest')
-                        docker.push("${env.BUILD_ID}")
+                        dockerapp.push("${env.BUILD_ID}")
                     }
                 }
             }
         }
-        stage('Deploy no Kubernetes'){
-            steps{
+        stage('Deploy no Kubernetes') {
+            steps {
                 sh 'echo "Executando o Kubectl apply"'
             }
         }
